@@ -32,6 +32,26 @@ src/
 - Java 11 or higher
 - Maven 3.6 or higher
 - SonarQube 10.4 (for compatibility)
+- Docker (for extracting dependencies)
+
+### First-Time Setup
+
+**Important**: This project uses SonarQube API dependencies that are extracted from a running SonarQube container. You need to run the setup script before building:
+
+```bash
+# Make sure you have a SonarQube container running
+docker run -d --name sonarqube -p 9000:9000 sonarqube:community
+
+# Run the dependency setup script
+./setup-dependencies.sh
+```
+
+This script will:
+- Find your running SonarQube container
+- Extract the required API JAR files to the `lib/` directory
+- Verify the files are correctly extracted
+
+**Note**: The `lib/` directory is gitignored and should not be committed to version control.
 
 ### Build Commands
 

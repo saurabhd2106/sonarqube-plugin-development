@@ -1,6 +1,5 @@
-# Maven
+# Maven build artifacts
 target/
-lib/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -11,22 +10,25 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# IDE
+# IDE files
 .idea/
-*.iws
 *.iml
-*.ipr
 .vscode/
 .settings/
 .project
 .classpath
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+
+# SonarQube dependencies (extracted from SonarQube installation)
+lib/
+*.jar
 
 # Logs
 *.log
 
-# SonarQube
-sonarqube-custom-rules-*.jar
+# Temporary files
+*.tmp
+*.temp
