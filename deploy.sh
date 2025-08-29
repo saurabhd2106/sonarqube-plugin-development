@@ -10,7 +10,9 @@ echo "========================================"
 # Check if JAR exists
 JAR_FILE="target/sonarqube-custom-rules-1.0.0.jar"
 if [ ! -f "$JAR_FILE" ]; then
-    echo "Error: Plugin JAR not found. Please run 'mvn package' first."
+    echo "Error: Plugin JAR not found at $JAR_FILE"
+    echo "Please run 'mvn package' first from the project directory."
+    echo "Current directory: $(pwd)"
     exit 1
 fi
 
@@ -22,6 +24,21 @@ if command -v docker &> /dev/null; then
     
     # Find running SonarQube containers
     SONARQUBE_CONTAINERS=$(docker ps --filter "ancestor=sonarqube" --format "{{.Names}}" 2>/dev/null || true)
+    
+    if [ -z "$SONARQUBE_CONTAINERS" ]; then
+        # Try finding by name pattern
+        SONARQUBE_CONTAINERS=$(docker ps --filter "name=sonarqube" --format "{{.Names}}" 2>/dev/null || true)
+    fi
+    
+    if [ -z "$SONARQUBE_CONTAINERS" ]; then
+        # Try finding by image name
+        SONARQUBE_CONTAINERS=$(docker ps --filter "image=sonarqube" --format "{{.Names}}" 2>/dev/null || true)
+    fi
+    
+    if [ -z "$SONARQUBE_CONTAINERS" ]; then
+        # Try finding by image name with community tag
+        SONARQUBE_CONTAINERS=$(docker ps --filter "ancestor=sonarqube:community" --format "{{.Names}}" 2>/dev/null || true)
+    fi
     
     if [ -n "$SONARQUBE_CONTAINERS" ]; then
         echo "Found running SonarQube containers:"
