@@ -18,12 +18,21 @@ echo "🔍 Checking for running SonarQube containers..."
 
 # Try different container name patterns
 CONTAINER_NAME=""
-for pattern in "sonarqube" "sonarqube:community" "sonarqube:latest"; do
-    if docker ps --filter "ancestor=$pattern" --format "table {{.Names}}" | grep -q .; then
-        CONTAINER_NAME=$(docker ps --filter "ancestor=$pattern" --format "{{.Names}}" | head -1)
-        break
-    fi
-done
+
+# First, try to find by container name
+if docker ps --filter "name=sonarqube" --format "{{.Names}}" | grep -q .; then
+    CONTAINER_NAME=$(docker ps --filter "name=sonarqube" --format "{{.Names}}" | head -1)
+fi
+
+# If not found by name, try by image patterns
+if [ -z "$CONTAINER_NAME" ]; then
+    for pattern in "sonarqube" "sonarqube:community" "sonarqube:latest"; do
+        if docker ps --filter "ancestor=$pattern" --format "table {{.Names}}" | grep -q .; then
+            CONTAINER_NAME=$(docker ps --filter "ancestor=$pattern" --format "{{.Names}}" | head -1)
+            break
+        fi
+    done
+fi
 
 if [ -z "$CONTAINER_NAME" ]; then
     echo "❌ No running SonarQube container found"
@@ -44,7 +53,7 @@ mkdir -p lib
 
 # Extract SonarQube application JAR
 echo "📦 Extracting SonarQube application JAR..."
-if docker exec "$CONTAINER_NAME" test -f /opt/sonarqube/lib/sonar-application-*.jar; then
+if docker exec "$CONTAINER_NAME" find /opt/sonarqube/lib -name "sonar-application-*.jar" | grep -q .; then
     docker cp "$CONTAINER_NAME:/opt/sonarqube/lib/sonar-application-25.8.0.112029.jar" lib/ 2>/dev/null || \
     docker cp "$(docker exec $CONTAINER_NAME find /opt/sonarqube/lib -name 'sonar-application-*.jar' | head -1)" lib/
     echo "✅ SonarQube application JAR extracted"
@@ -55,7 +64,7 @@ fi
 
 # Extract Java plugin JAR
 echo "📦 Extracting Java plugin JAR..."
-if docker exec "$CONTAINER_NAME" test -f /opt/sonarqube/lib/extensions/sonar-java-plugin-*.jar; then
+if docker exec "$CONTAINER_NAME" find /opt/sonarqube/lib/extensions -name "sonar-java-plugin-*.jar" | grep -q .; then
     docker cp "$CONTAINER_NAME:/opt/sonarqube/lib/extensions/sonar-java-plugin-8.18.0.40025.jar" lib/ 2>/dev/null || \
     docker cp "$(docker exec $CONTAINER_NAME find /opt/sonarqube/lib/extensions -name 'sonar-java-plugin-*.jar' | head -1)" lib/
     echo "✅ Java plugin JAR extracted"
