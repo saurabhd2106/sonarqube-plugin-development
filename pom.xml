@@ -19,6 +19,24 @@
     </properties>
 
     <dependencies>
+        <!-- SonarQube Plugin API (extracted from SonarQube installation) -->
+        <dependency>
+            <groupId>org.sonarsource.sonarqube</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
+            <version>25.8.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/sonar-application-25.8.0.112029.jar</systemPath>
+        </dependency>
+
+        <!-- SonarQube Java Plugin API (extracted from SonarQube installation) -->
+        <dependency>
+            <groupId>org.sonarsource.java</groupId>
+            <artifactId>sonar-java-plugin-api</artifactId>
+            <version>8.18.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/sonar-java-plugin-8.18.0.40025.jar</systemPath>
+        </dependency>
+
         <!-- Testing dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
