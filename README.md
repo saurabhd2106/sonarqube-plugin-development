@@ -50,10 +50,49 @@ The plugin JAR will be created in the `target/` directory.
 
 ## Installing the Plugin
 
+### Option 1: Using Deployment Scripts
+
+#### For Docker Containers:
+```bash
+# Build the plugin
+mvn clean package
+
+# Deploy to Docker container
+./deploy-docker.sh
+```
+
+#### For Local Installation:
+```bash
+# Build the plugin
+mvn clean package
+
+# Deploy using the general script
+./deploy.sh
+```
+
+### Option 2: Manual Installation
+
 1. **Stop SonarQube** if it's running
 2. **Copy the plugin JAR** from `target/sonarqube-custom-rules-1.0.0.jar` to SonarQube's `extensions/plugins/` directory
 3. **Start SonarQube**
 4. **Verify installation** by checking the Rules section in SonarQube
+
+### For Docker with Named Volumes
+
+If your SonarQube is running with Docker volumes like:
+```yaml
+volumes:
+  - sonarqube_data:/opt/sonarqube/data
+  - sonarqube_extensions:/opt/sonarqube/extensions
+  - sonarqube_logs:/opt/sonarqube/logs
+  - sonarqube_temp:/opt/sonarqube/temp
+```
+
+Use the `deploy-docker.sh` script which will automatically:
+- Find your SonarQube container
+- Stop it
+- Copy the plugin to the correct location
+- Restart the container
 
 ## Activating Rules
 

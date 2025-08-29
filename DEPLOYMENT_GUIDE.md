@@ -73,6 +73,43 @@ docker cp target/sonarqube-custom-rules-1.0.0.jar sonarqube-plugins_sonarqube_1:
 docker-compose restart sonarqube
 ```
 
+### Using Docker with Named Volumes
+
+If your SonarQube is running with named volumes like:
+```yaml
+volumes:
+  - sonarqube_data:/opt/sonarqube/data
+  - sonarqube_extensions:/opt/sonarqube/extensions
+  - sonarqube_logs:/opt/sonarqube/logs
+  - sonarqube_temp:/opt/sonarqube/temp
+```
+
+You can use the specialized Docker deployment script:
+
+```bash
+# Build the plugin
+mvn clean package
+
+# Deploy using the Docker script
+./deploy-docker.sh
+```
+
+Or manually:
+
+```bash
+# Find your SonarQube container
+docker ps --filter "ancestor=sonarqube"
+
+# Stop the container
+docker stop <container_name>
+
+# Copy plugin to container
+docker cp target/sonarqube-custom-rules-1.0.0.jar <container_name>:/opt/sonarqube/extensions/plugins/
+
+# Start the container
+docker start <container_name>
+```
+
 ### Manual Testing
 
 1. **Create a test Java file** with TODO comments:
